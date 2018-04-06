@@ -23695,7 +23695,6 @@ var AlarmService = (function () {
             var alarmHTML_1 = "<div class='toast-action'><span>" + alarm.note + " - <small>" + alarm.hour12 + ":" + alarm.mins + " " + alarm.ampm + "</small></span></div>";
             this.observableQuote.subscribe(function (quotes) {
                 var quoteString = quotes[0].content + alarmHTML_1;
-                console.log(quoteString);
                 var toastM = M.toast({ html: quoteString, outDuration: 5000 });
             }, function (error) { return console.log(error); });
         }

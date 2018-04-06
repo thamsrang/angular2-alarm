@@ -89,7 +89,6 @@ export class AlarmService {
     	this.observableQuote.subscribe(
             quotes => {
                 let quoteString: string = quotes[0].content + alarmHTML;
-                console.log(quoteString);
                 let toastM = M.toast({html: quoteString, outDuration:5000});
               },
             error =>  console.log(error));
