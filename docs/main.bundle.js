@@ -37149,7 +37149,7 @@ __webpack_require__(343);
 var QuoteService = (function () {
     function QuoteService(jsonp) {
         this.jsonp = jsonp;
-        this.url = "http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&_jsonp=JSONP_CALLBACK";
+        this.url = "https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&_jsonp=JSONP_CALLBACK";
     }
     ;
     QuoteService.prototype.getQuotes = function () {

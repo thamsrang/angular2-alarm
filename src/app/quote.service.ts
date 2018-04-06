@@ -10,7 +10,7 @@ import { Quote } from './quote';
 @Injectable()
 export class QuoteService {
 
-    url = "http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&_jsonp=JSONP_CALLBACK";;
+    url = "https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&_jsonp=JSONP_CALLBACK";;
     constructor(private jsonp:Jsonp) { }
 
     getQuotes(): Observable<Quote[]> {
