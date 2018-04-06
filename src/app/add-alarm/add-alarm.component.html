@@ -1,0 +1,43 @@
+<ul class="collapsible">
+    <li>
+        <div class="collapsible-header">
+            <i class="material-icons">add</i>Add Alarm</div>
+        <div class="collapsible-body">
+            <div class="row">
+                <div class="input-field col s12">
+                    <input id="alarmtext" #alarmtext type="text" data-length="30">
+                    <label for="input_text">Alarm Note</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="input-field col s9">
+                    <input id="timepicker" #timepicker type="text" class="timepicker">
+                    <label for="input_text">Set Time</label>
+                </div>
+                <div class="input-field col s3">
+                    <a class="btn waves-effect waves-light" (click)="add(repeatcheckbox, alarmtext)">Add</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="switch col">
+                    <label>
+                        No Repeat
+                        <input type="checkbox" #repeatcheckbox checked (change)="repeatchange(repeatcheckbox.checked)">
+                        <span class="lever"></span>
+                        Repeat
+                    </label>
+                </div>
+            </div>
+            <div class="row" *ngIf='!repeatcheckbox.checked'>
+                <ul class="pagination">
+                    <li *ngFor="let day of JSObject.keys(weekdays);" [ngClass]="{'grey lighten-3':!weekdays[day], 'active':weekdays[day]}" (click)="weekdays[day] = (weekdays[day] ? false :true);"
+                        class="waves-effect">
+                        <a>
+                            <small>{{day}}</small>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </li>
+</ul>
