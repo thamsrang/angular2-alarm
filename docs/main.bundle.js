@@ -23692,7 +23692,9 @@ var AlarmService = (function () {
         if (indx != -1) {
             var quote = new quote_1.Quote();
             this.observableQuote = this.quoteService.getQuotes();
-            var alarmHTML_1 = "<div class='toast-action'><span>" + alarm.note + " - <small>" + alarm.hour12 + ":" + alarm.mins + " " + alarm.ampm + "</small></span></div>";
+            var qhour = ("0" + alarm.hour12).slice(-2);
+            var qmins = ("0" + alarm.mins).slice(-2);
+            var alarmHTML_1 = "<div class='toast-action'><span>" + alarm.note + " - <small>" + qhour + ":" + qmins + " " + alarm.ampm + "&nbsp; </small></span></div>";
             this.observableQuote.subscribe(function (quotes) {
                 var quoteString = quotes[0].content + alarmHTML_1;
                 var toastM = M.toast({ html: quoteString, outDuration: 5000 });
@@ -51614,36 +51616,60 @@ var AddAlarm = (function () {
     AddAlarm.prototype.repeatchange = function (isChecked) {
         if (!isChecked) {
             this.weekdays = Object.assign({}, alarm_1.Alarm.weekObj);
+            var daysNum = (new Date()).getDay();
+            var todayDay = Object.keys(alarm_1.Alarm.weekObj)[daysNum];
+            this.weekdays[todayDay] = true;
         }
     };
-    AddAlarm.prototype.add = function (repeatCheckBoxRef, alarmTextRef) {
-        console.log(alarmTextRef.value);
-        if (!alarmTextRef.value || !this.timeInput.time) {
+    AddAlarm.prototype.add = function () {
+        var isrepeat = this.repeatCheckBox.nativeElement.checked;
+        var alarmtext = this.alarmTextInput.nativeElement.value;
+        var isDaySelected = false;
+        if (!isrepeat) {
+            for (var day in this.weekdays) {
+                if (this.weekdays[day]) {
+                    isDaySelected = true;
+                    break;
+                }
+            }
+        }
+        else {
+            this.weekdays = Object.assign({}, alarm_1.Alarm.weekObj);
+        }
+        if (!alarmtext || !this.timeInput.time || (!isrepeat && !isDaySelected)) {
             return false;
         }
         var hour12 = this.timeInput.hours;
-        var mins = this.timeInput.time.split(':')[1];
+        var mins = Number.parseInt(this.timeInput.time.split(':')[1]);
         var ampm = this.timeInput.amOrPm;
-        var isrepeat = repeatCheckBoxRef.checked;
-        var alarmNew = new alarm_1.Alarm(0, alarmTextRef.value, hour12, mins, ampm, isrepeat, this.weekdays);
+        var alarmNew = new alarm_1.Alarm(0, alarmtext, hour12, mins, ampm, isrepeat, this.weekdays);
         this.alarmService.addAlarm(alarmNew);
         this.collapse.close();
         this.weekdays = Object.assign({}, alarm_1.Alarm.weekObj);
-        repeatCheckBoxRef.checked = true;
-        alarmTextRef.value = '';
+        this.repeatCheckBox.nativeElement.checked = true;
+        this.alarmTextInput.nativeElement.value = '';
         this.timeInput.el.value = '';
+        M.updateTextFields();
         return true;
     };
+    __decorate([
+        core_1.ViewChild('alarmtext'), 
+        __metadata('design:type', (typeof (_a = typeof core_1.ElementRef !== 'undefined' && core_1.ElementRef) === 'function' && _a) || Object)
+    ], AddAlarm.prototype, "alarmTextInput", void 0);
+    __decorate([
+        core_1.ViewChild('repeatcheckbox'), 
+        __metadata('design:type', (typeof (_b = typeof core_1.ElementRef !== 'undefined' && core_1.ElementRef) === 'function' && _b) || Object)
+    ], AddAlarm.prototype, "repeatCheckBox", void 0);
     AddAlarm = __decorate([
         core_1.Component({
             selector: 'add-alarm',
             styles: [],
             template: __webpack_require__(629)
         }), 
-        __metadata('design:paramtypes', [(typeof (_a = typeof alarm_service_1.AlarmService !== 'undefined' && alarm_service_1.AlarmService) === 'function' && _a) || Object])
+        __metadata('design:paramtypes', [(typeof (_c = typeof alarm_service_1.AlarmService !== 'undefined' && alarm_service_1.AlarmService) === 'function' && _c) || Object])
     ], AddAlarm);
     return AddAlarm;
-    var _a;
+    var _a, _b, _c;
 }());
 exports.AddAlarm = AddAlarm;
 
@@ -55062,7 +55088,7 @@ process.umask = function() { return 0; };
 /* 629 */
 /***/ function(module, exports) {
 
-module.exports = "<ul class=\"collapsible\">\r\n    <li>\r\n        <div class=\"collapsible-header\">\r\n            <i class=\"material-icons\">add</i>Add Alarm</div>\r\n        <div class=\"collapsible-body\">\r\n            <div class=\"row\">\r\n                <div class=\"input-field col s12\">\r\n                    <input id=\"alarmtext\" #alarmtext type=\"text\" data-length=\"30\">\r\n                    <label for=\"input_text\">Alarm Note</label>\r\n                </div>\r\n            </div>\r\n            <div class=\"row\">\r\n                <div class=\"input-field col s9\">\r\n                    <input id=\"timepicker\" #timepicker type=\"text\" class=\"timepicker\">\r\n                    <label for=\"input_text\">Set Time</label>\r\n                </div>\r\n                <div class=\"input-field col s3\">\r\n                    <a class=\"btn waves-effect waves-light\" (click)=\"add(repeatcheckbox, alarmtext)\">Add</a>\r\n                </div>\r\n            </div>\r\n            <div class=\"row\">\r\n                <div class=\"switch col\">\r\n                    <label>\r\n                        No Repeat\r\n                        <input type=\"checkbox\" #repeatcheckbox checked (change)=\"repeatchange(repeatcheckbox.checked)\">\r\n                        <span class=\"lever\"></span>\r\n                        Repeat\r\n                    </label>\r\n                </div>\r\n            </div>\r\n            <div class=\"row\" *ngIf='!repeatcheckbox.checked'>\r\n                <ul class=\"pagination\">\r\n                    <li *ngFor=\"let day of JSObject.keys(weekdays);\" [ngClass]=\"{'grey lighten-3':!weekdays[day], 'active':weekdays[day]}\" (click)=\"weekdays[day] = (weekdays[day] ? false :true);\"\r\n                        class=\"waves-effect\">\r\n                        <a>\r\n                            <small>{{day}}</small>\r\n                        </a>\r\n                    </li>\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </li>\r\n</ul>"
+module.exports = "<ul class=\"collapsible\">\r\n    <li>\r\n        <div class=\"collapsible-header\">\r\n            <i class=\"material-icons\">add</i>Add Alarm</div>\r\n        <div class=\"collapsible-body\">\r\n            <div class=\"row\">\r\n                <div class=\"input-field col s12\">\r\n                    <input id=\"alarmtext\" #alarmtext type=\"text\" data-length=\"30\" required>\r\n                    <label for=\"alarmtext\">Alarm Note</label>\r\n                </div>\r\n            </div>\r\n            <div class=\"row\">\r\n                <div class=\"input-field col s9\">\r\n                    <input id=\"timepicker\" #timepicker type=\"text\" class=\"timepicker\">\r\n                    <label for=\"timepicker\">Set Time</label>\r\n                </div>\r\n                <div class=\"input-field col s3\">\r\n                    <a class=\"btn waves-effect waves-light\" (click)=\"add()\">Add</a>\r\n                </div>\r\n            </div>\r\n            <div class=\"row\">\r\n                <div class=\"switch col\">\r\n                    <label>\r\n                        No Repeat\r\n                        <input type=\"checkbox\" #repeatcheckbox checked (change)=\"repeatchange(repeatcheckbox.checked)\">\r\n                        <span class=\"lever\"></span>\r\n                        Repeat\r\n                    </label>\r\n                </div>\r\n            </div>\r\n            <div class=\"row\" *ngIf='!repeatcheckbox.checked'>\r\n                <ul class=\"pagination\">\r\n                    <li *ngFor=\"let day of JSObject.keys(weekdays);\" [ngClass]=\"{'grey lighten-3':!weekdays[day], 'active':weekdays[day]}\" (click)=\"weekdays[day] = (weekdays[day] ? false :true);\"\r\n                        class=\"waves-effect\">\r\n                        <a>\r\n                            <small>{{day}}</small>\r\n                        </a>\r\n                    </li>\r\n                </ul>\r\n            </div>\r\n        </div>\r\n    </li>\r\n</ul>"
 
 /***/ },
 /* 630 */
