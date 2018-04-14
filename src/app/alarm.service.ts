@@ -85,7 +85,9 @@ export class AlarmService {
     if(indx != -1){
       const quote = new Quote();
       this.observableQuote = this.quoteService.getQuotes();
-      let alarmHTML = "<div class='toast-action'><span>"+ alarm.note +" - <small>"+alarm.hour12+":"+alarm.mins+" "+alarm.ampm+"</small></span></div>";
+      let qhour = ("0"+alarm.hour12).slice(-2);
+      let qmins = ("0"+alarm.mins).slice(-2); 
+      let alarmHTML = "<div class='toast-action'><span>"+ alarm.note +" - <small>"+qhour+":"+qmins+" "+alarm.ampm+"&nbsp; </small></span></div>";
     	this.observableQuote.subscribe(
             quotes => {
                 let quoteString: string = quotes[0].content + alarmHTML;

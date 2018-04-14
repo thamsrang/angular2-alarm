@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, OnInit} from '@angular/core';
+import {Component, Input, Output, EventEmitter, OnInit, ElementRef, ViewChild} from '@angular/core';
 import { Alarm } from '../alarm';
 import { AlarmService } from '../alarm.service';
 
@@ -16,6 +16,9 @@ export class AddAlarm implements OnInit {
   private weekdays: Object = Object.assign({}, Alarm.weekObj);
   private JSObject: Object = Object;
   
+  @ViewChild('alarmtext') alarmTextInput: ElementRef;
+  @ViewChild('repeatcheckbox') repeatCheckBox: ElementRef;
+
   constructor(private alarmService: AlarmService){}
 
   ngOnInit(){
@@ -29,25 +32,40 @@ export class AddAlarm implements OnInit {
   repeatchange(isChecked: string){
     if(!isChecked){
       this.weekdays = Object.assign({}, Alarm.weekObj);
+      let daysNum = (new Date()).getDay();
+      let todayDay = Object.keys(Alarm.weekObj)[daysNum];
+      this.weekdays[todayDay] = true;
     }
   }
-
-  add(repeatCheckBoxRef:HTMLInputElement, alarmTextRef:HTMLInputElement) {
-    console.log(alarmTextRef.value);
-    if(!alarmTextRef.value || !this.timeInput.time){
+  add() {
+    const isrepeat = this.repeatCheckBox.nativeElement.checked;
+    const alarmtext = this.alarmTextInput.nativeElement.value;
+    let isDaySelected =  false;
+    if(!isrepeat){
+      for (let day in this.weekdays) {
+        if(this.weekdays[day]) {
+            isDaySelected = true;
+            break;
+        }
+      }
+    }
+    else{
+      this.weekdays = Object.assign({}, Alarm.weekObj);
+    }
+    if(!alarmtext || !this.timeInput.time || (!isrepeat && !isDaySelected)) {
       return false;
     }
     let hour12: number = this.timeInput.hours;
-    const mins = this.timeInput.time.split(':')[1];
+    let mins: number = Number.parseInt(this.timeInput.time.split(':')[1]);
     const ampm = this.timeInput.amOrPm;
-    const isrepeat = repeatCheckBoxRef.checked;
-    const alarmNew =  new Alarm(0, alarmTextRef.value, hour12, mins, ampm, isrepeat, this.weekdays);
+    const alarmNew =  new Alarm(0, alarmtext, hour12, mins, ampm, isrepeat, this.weekdays);
     this.alarmService.addAlarm(alarmNew);
     this.collapse.close();
     this.weekdays = Object.assign({}, Alarm.weekObj);
-    repeatCheckBoxRef.checked=true;
-    alarmTextRef.value ='';
+    this.repeatCheckBox.nativeElement.checked = true;
+    this.alarmTextInput.nativeElement.value ='';
     this.timeInput.el.value='';
+    M.updateTextFields();
     return true;
   }
 }

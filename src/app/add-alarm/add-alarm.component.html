@@ -5,17 +5,17 @@
         <div class="collapsible-body">
             <div class="row">
                 <div class="input-field col s12">
-                    <input id="alarmtext" #alarmtext type="text" data-length="30">
-                    <label for="input_text">Alarm Note</label>
+                    <input id="alarmtext" #alarmtext type="text" data-length="30" required>
+                    <label for="alarmtext">Alarm Note</label>
                 </div>
             </div>
             <div class="row">
                 <div class="input-field col s9">
                     <input id="timepicker" #timepicker type="text" class="timepicker">
-                    <label for="input_text">Set Time</label>
+                    <label for="timepicker">Set Time</label>
                 </div>
                 <div class="input-field col s3">
-                    <a class="btn waves-effect waves-light" (click)="add(repeatcheckbox, alarmtext)">Add</a>
+                    <a class="btn waves-effect waves-light" (click)="add()">Add</a>
                 </div>
             </div>
             <div class="row">
